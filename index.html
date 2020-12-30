@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>图片展示</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="./js/jquery-2.1.0.js"></script>
+		<STYLE type="text/css">
+			ul.pagi {
+				display: inline-block;
+				padding: 0;
+				margin: 0;
+			}
+
+			ul.pagi li {
+				display: inline;
+			}
+
+			ul.pagi li a {
+				color: black;
+				float: left;
+				padding: 8px 16px;
+				text-decoration: none;
+				border-radius: 5px;
+			}
+
+			ul.pagi li a.acti {
+				background-color: #af0617;
+				color: white;
+				border-radius: 5px;
+			}
+
+			ul.pagi li a:hover:not(.acti) {
+				background-color: #ddd;
+			}
+		</STYLE>
+	</head>
+	<body>
+		<br />
+		<br />
+		<br />
+		<div class="container">
+			<table class="table table-striped table-bordered ">
+				<tbody id="tb">
+				</tbody>
+			</table>
+			<div id="" align="center">
+				<ul class="pagi" id="u1">
+					<li>
+						<a href="#">
+							<span onclick="previouspage()">上一页</span>
+						</a>
+					</li>
+					<li onclick="a(this)" id="1"><a class="acti" href="#">1</a></li>
+					<li onclick="a(this)" id="2"><a href=" #">2</a></li>
+					<li onclick="a(this)" id="3"><a href=" #">3</a></li>
+					<li onclick="a(this)" id="4"><a href=" #">4</a></li>
+					<li onclick="a(this)" id="5"><a href=" #">5</a></li>
+					<li onclick="a(this)" id="6"><a href=" #">6</a></li>
+					<li onclick="a(this)" id="7"><a href=" #">7</a></li>
+					<li onclick="a(this)" id="8"><a href=" #">8</a></li>
+					<li onclick="a(this)" id="9"><a href=" #">9</a></li>
+					<li onclick="a(this)" id="10"><a href=" #">10</a></li>
+					<li>
+						<a href="#">
+							<span onclick="nextpage()">下一页</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			var page = 1;
+			document.onreadystatechange = function() {
+				if (document.readyState == "complete") {
+					var obj = document.getElementById(page);
+					a(obj);
+				}
+			}
+
+			function previouspage() {
+				if (page > 1) {
+					page--;
+					var obj = document.getElementById(page++);
+					a(obj);
+				} else {
+					alert("已到第一页")
+				}
+
+			}
+
+			function nextpage() {
+				if (page < 10) {
+					page++;
+					var obj = document.getElementById(page--);
+					a(obj);
+				} else {
+					alert("已到最后一页")
+				}
+
+			}
+
+			function a(obj) {
+				document.getElementById(page).childNodes[0].setAttribute("class", "");
+				obj.childNodes[0].setAttribute("class", "acti");
+
+				page = obj.id;
+				$.ajax({
+					url: "https://api.apiopen.top/getImages",
+					type: "get",
+					data: "page=" + page + "&count=20",
+					success: function(data) {
+						//回调数据 
+						//注意 data可能是json字符串 也可能是json对象  alert();
+						//JSON.parse();
+						//alert(data.result[0].img);
+						var tbody = $("#tb");
+						tbody.html("");
+						for (var i = 0; i < data.result.length; i = i + 4) {
+
+							var str = "<tr height='100px'>" +
+								"<td><a target='_blank' href='" + data.result[i].img + "'><img height='100px' src='" + data.result[i].img +
+								"'/></a></td>" +
+								"<td><a target='_blank' href='" + data.result[i + 1].img + "'><img height='100px' src='" + data.result[i + 1]
+								.img + "'/></a></td>" +
+								"<td><a target='_blank' href='" + data.result[i + 2].img + "'><img height='100px' src='" + data.result[i + 2]
+								.img + "'/></a></td>" +
+								"<td><a target='_blank' href='" + data.result[i + 3].img + "'><img height='100px' src='" + data.result[i + 3]
+								.img + "'/></a></td>" +
+								"</tr>";
+
+							tbody.append(str); //将字符串页面添加到指定的项目
+
+						}
+					}
+				})
+			}
+		</script>
+	</body>
+</html>
